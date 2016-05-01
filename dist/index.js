@@ -35,7 +35,9 @@ module.exports = AutoLaunch = (function() {
   }
 
   AutoLaunch.prototype.fixMacExecPath = function(path) {
-    return path.replace(/(^.+?[^\/]+?\.app)\/Contents\/(Frameworks\/((\1|[^\/]+?) Helper)\.app\/Contents\/MacOS\/\3|MacOS\/Electron)/, '$1');
+    path = path.replace(/\.app\/Contents\/Frameworks\/.* Helper.*\.app\/Contents\/MacOS\/[^\/]*$/, '.app');
+    path = path.replace('.app/Contents/MacOS/Electron', '.app');
+    return path;
   };
 
   AutoLaunch.prototype.removeNwjsLoginItem = function() {
