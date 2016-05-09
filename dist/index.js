@@ -36,7 +36,7 @@ module.exports = AutoLaunch = (function() {
 
   AutoLaunch.prototype.fixMacExecPath = function(path) {
     path = path.replace(/\.app\/Contents\/Frameworks\/.* Helper.*\.app\/Contents\/MacOS\/[^\/]*$/, '.app');
-    path = path.replace('.app/Contents/MacOS/Electron', '.app');
+    path = path.replace(/\.app\/Contents\/MacOS\/[^\/]*$/, '.app');
     return path;
   };
 
