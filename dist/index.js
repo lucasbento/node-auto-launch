@@ -1,27 +1,36 @@
-var AutoLaunch, Promise,
+var AutoLaunch, isPathAbsolute,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-Promise = require('es6-promise').Promise;
+isPathAbsolute = require('path-is-absolute');
 
 module.exports = AutoLaunch = (function() {
 
   /* Public */
-  function AutoLaunch(opts) {
+  function AutoLaunch(arg) {
+    var isHidden, mac, name, path, versions;
+    name = arg.name, isHidden = arg.isHidden, mac = arg.mac, path = arg.path;
     this.fixOpts = bind(this.fixOpts, this);
-    var versions;
-    if (opts.name == null) {
+    this.isEnabled = bind(this.isEnabled, this);
+    this.disable = bind(this.disable, this);
+    this.enable = bind(this.enable, this);
+    if (name == null) {
       throw new Error('You must specify a name');
     }
-    this.opts = {};
-    this.opts.appName = opts.name;
-    this.opts.isHiddenOnLaunch = opts.isHidden != null ? opts.isHidden : false;
+    this.opts = {
+      appName: name,
+      isHiddenOnLaunch: isHidden != null ? isHidden : false,
+      mac: mac != null ? mac : {}
+    };
     versions = typeof process !== "undefined" && process !== null ? process.versions : void 0;
-    if (opts.path != null) {
-      this.opts.appPath = opts.path;
+    if (path != null) {
+      if (!isPathAbsolute(path)) {
+        throw new Error('path must be absolute');
+      }
+      this.opts.appPath = path;
     } else if ((versions != null) && ((versions.nw != null) || (versions['node-webkit'] != null) || (versions.electron != null))) {
       this.opts.appPath = process.execPath;
     } else {
-      throw new Error("You must give a path (this is only auto-detected for NW.js and Electron apps)");
+      throw new Error('You must give a path (this is only auto-detected for NW.js and Electron apps)');
     }
     this.fixOpts();
     this.api = null;
@@ -31,21 +40,30 @@ module.exports = AutoLaunch = (function() {
       this.api = require('./AutoLaunchMac');
     } else if (/linux/.test(process.platform)) {
       this.api = require('./AutoLaunchLinux');
+    } else {
+      throw new Error('Unsupported platform');
     }
   }
 
-  AutoLaunch.prototype.fixMacExecPath = function(path) {
-    path = path.replace(/\.app\/Contents\/Frameworks\/.* Helper.*\.app\/Contents\/MacOS\/[^\/]*$/, '.app');
-    path = path.replace(/\.app\/Contents\/MacOS\/[^\/]*$/, '.app');
-    return path;
+  AutoLaunch.prototype.enable = function() {
+    return this.api.enable(this.opts);
   };
 
-  AutoLaunch.prototype.removeNwjsLoginItem = function() {
-    return this.api.disable({
-      appName: 'nwjs Helper'
-    }, function() {
-      return null;
-    });
+  AutoLaunch.prototype.disable = function() {
+    return this.api.disable(this.opts.appName, this.opts.mac);
+  };
+
+  AutoLaunch.prototype.isEnabled = function() {
+    return this.api.isEnabled(this.opts.appName, this.opts.mac);
+  };
+
+
+  /* Private */
+
+  AutoLaunch.prototype.fixMacExecPath = function(path) {
+    path = path.replace(/(^.+?[^\/]+?\.app)\/Contents\/(Frameworks\/((\1|[^\/]+?) Helper)\.app\/Contents\/MacOS\/\3|MacOS\/Electron)/, '$1');
+    path = path.replace(/\.app\/Contents\/MacOS\/[^\/]*$/, '.app');
+    return path;
   };
 
   AutoLaunch.prototype.fixOpts = function() {
@@ -67,27 +85,6 @@ module.exports = AutoLaunch = (function() {
         return this.opts.appName = this.opts.appName.substr(0, this.opts.appName.length - '.app'.length);
       }
     }
-  };
-
-  AutoLaunch.prototype.enable = function() {
-    if (this.api == null) {
-      return Promise.reject(new Error('Platform not supported'));
-    }
-    return this.api.enable(this.opts);
-  };
-
-  AutoLaunch.prototype.disable = function() {
-    if (this.api == null) {
-      return Promise.reject(new Error('Platform not supported'));
-    }
-    return this.api.disable(this.opts);
-  };
-
-  AutoLaunch.prototype.isEnabled = function() {
-    if (this.api == null) {
-      return Promise.reject(new Error('Platform not supported'));
-    }
-    return this.api.isEnabled(this.opts);
   };
 
   return AutoLaunch;

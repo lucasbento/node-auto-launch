@@ -6,19 +6,20 @@
     ]
   ],
   "_from": "auto-launch@latest",
-  "_id": "auto-launch@2.0.1",
+  "_id": "auto-launch@5.0.1",
   "_inCache": true,
   "_installable": true,
   "_location": "/auto-launch",
+  "_nodeVersion": "4.0.0",
   "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/auto-launch-2.0.1.tgz_1459852037039_0.042042287765070796"
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/auto-launch-5.0.1.tgz_1474321635789_0.39501241664402187"
   },
   "_npmUser": {
-    "email": "me@don.al",
-    "name": "4ver"
+    "email": "contact@adamlynch.ie",
+    "name": "adam-lynch"
   },
-  "_npmVersion": "1.4.28",
+  "_npmVersion": "3.10.6",
   "_phantomChildren": {},
   "_requested": {
     "name": "auto-launch",
@@ -29,11 +30,10 @@
     "type": "tag"
   },
   "_requiredBy": [
-    "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/auto-launch/-/auto-launch-2.0.1.tgz",
-  "_shasum": "4ef7ce233a8f71763e18f61146920d1e28778b59",
+  "_resolved": "https://registry.npmjs.org/auto-launch/-/auto-launch-5.0.1.tgz",
+  "_shasum": "2015a8a30384abe0e7f98cbdca8145cf154753ae",
   "_shrinkwrap": null,
   "_spec": "auto-launch",
   "_where": "/Users/jeffba/Dropbox/LocalMachines/Yahoo/Code/iris-electron/app",
@@ -51,12 +51,12 @@
   ],
   "dependencies": {
     "applescript": "^1.0.0",
-    "es6-promise": "^3.1.2",
     "mkdirp": "^0.5.1",
-    "untildify": "^2.1.0",
-    "winreg": "1.0.1"
+    "path-is-absolute": "^1.0.0",
+    "untildify": "^3.0.2",
+    "winreg": "1.2.2"
   },
-  "description": "Launch node-webkit apps at login (mac & windows)",
+  "description": "Launch node applications or executables at login (Mac, Windows, and Linux)",
   "devDependencies": {
     "chai": "^3.5.0",
     "coffee-script": "^1.10.0",
@@ -65,21 +65,25 @@
     "gulp-coffeelint": "^0.6.0",
     "gulp-coffeelint-threshold": "^1.0.0",
     "gulp-load-plugins": "^1.2.0",
-    "gulp-mocha": "^2.2.0",
+    "gulp-mocha": "^3.0.1",
     "gulp-util": "^3.0.7",
     "teamwork-coffeelint-rules": "0.0.1"
   },
   "directories": {},
   "dist": {
-    "shasum": "4ef7ce233a8f71763e18f61146920d1e28778b59",
-    "tarball": "https://registry.npmjs.org/auto-launch/-/auto-launch-2.0.1.tgz"
+    "shasum": "2015a8a30384abe0e7f98cbdca8145cf154753ae",
+    "tarball": "https://registry.npmjs.org/auto-launch/-/auto-launch-5.0.1.tgz"
   },
-  "gitHead": "4d9c5b8bab7c814083b547da0fabea035ae273a7",
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "gitHead": "0ccd48446d3e7762f17da8920d0c660b4b0e41a9",
   "homepage": "https://github.com/4ver/node-auto-launch",
   "keywords": [
     "login",
     "launch",
     "node-webkit",
+    "electron",
     "boot",
     "login-items"
   ],
@@ -105,5 +109,5 @@
   "scripts": {
     "test": "gulp test"
   },
-  "version": "2.0.1"
+  "version": "5.0.1"
 }

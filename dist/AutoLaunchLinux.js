@@ -1,66 +1,35 @@
-var Promise, fs, mkdirp, untildify;
-
-fs = require('fs');
-
-mkdirp = require('mkdirp');
+var fileBasedUtilities, untildify;
 
 untildify = require('untildify');
 
-Promise = require('es6-promise').Promise;
+fileBasedUtilities = require('./fileBasedUtilities');
 
 module.exports = {
-  getDir: function(opts) {
-    return untildify("~/.config/autostart/");
+
+  /* Public */
+  enable: function(arg) {
+    var appName, appPath, data, hiddenArg, isHiddenOnLaunch;
+    appName = arg.appName, appPath = arg.appPath, isHiddenOnLaunch = arg.isHiddenOnLaunch;
+    hiddenArg = isHiddenOnLaunch ? ' --hidden' : '';
+    data = "[Desktop Entry]\nType=Application\nVersion=1.0\nName=" + appName + "\nComment=" + appName + "startup script\nExec=" + appPath + hiddenArg + "\nStartupNotify=false\nTerminal=false";
+    return fileBasedUtilities.createFile({
+      data: data,
+      directory: this.getDirectory(),
+      filePath: this.getFilePath(appName)
+    });
   },
-  getFile: function(opts) {
-    var file;
-    file = this.getDir() + opts.appName + '.desktop';
-    return file;
+  disable: function(appName) {
+    return fileBasedUtilities.removeFile(this.getFilePath(appName));
   },
-  enable: function(opts) {
-    return new Promise((function(_this) {
-      return function(resolve, reject) {
-        var data, file;
-        file = _this.getFile(opts);
-        data = ['[Desktop Entry]', 'Type=Application', 'Vestion=1.0', 'Name=' + opts.appName, 'Comment=' + opts.appName + ' startup script', 'Exec=' + opts.appPath, 'StartupNotify=false', 'Terminal=false'].join('\n');
-        mkdirp.sync(_this.getDir());
-        return fs.writeFile(file, data, function(err) {
-          if (err != null) {
-            return reject(err);
-          }
-          return resolve();
-        });
-      };
-    })(this));
+  isEnabled: function(appName) {
+    return fileBasedUtilities.isEnabled(this.getFilePath(appName));
   },
-  disable: function(opts) {
-    return new Promise((function(_this) {
-      return function(resolve, reject) {
-        var file;
-        file = _this.getFile(opts);
-        return fs.stat(file, function(err) {
-          if (err != null) {
-            return reject(err);
-          }
-          return fs.unlink(file, function(err2) {
-            if (err != null) {
-              return reject(err2);
-            }
-            return resolve();
-          });
-        });
-      };
-    })(this));
+
+  /* Private */
+  getDirectory: function() {
+    return untildify('~/.config/autostart/');
   },
-  isEnabled: function(opts) {
-    return new Promise((function(_this) {
-      return function(resolve, reject) {
-        var file;
-        file = _this.getFile(opts);
-        return fs.stat(file, function(err, stat) {
-          return resolve(stat != null);
-        });
-      };
-    })(this));
+  getFilePath: function(appName) {
+    return "" + (this.getDirectory()) + appName + ".desktop";
   }
 };
